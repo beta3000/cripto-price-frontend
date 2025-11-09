@@ -1,4 +1,4 @@
-/* Reset y variables */
+/* Reset and CSS variables */
 * {
     margin: 0;
     padding: 0;
@@ -23,7 +23,6 @@
     --positive: #10b981;
     --negative: #ef4444;
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
 [data-theme="dark"] {
@@ -43,7 +42,6 @@
     --positive: #34d399;
     --negative: #f87171;
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
 body {
@@ -97,10 +95,16 @@ body {
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.5px;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+}
+
+/* Gradient text effect with fallback */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+    .title {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
 }
 
 .theme-controls {
@@ -327,16 +331,7 @@ body {
     }
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
+
 
 /* Crypto Grid */
 .crypto-grid {
