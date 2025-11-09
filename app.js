@@ -12,13 +12,15 @@ const CONFIG = {
 
 // State
 let priceData = {};
+let conversionFactors = {}; // Stores all conversion factors between pairs
 let updateInterval = null;
 let lastUpdateTime = null;
+let lastEditedField = 'from'; // Track which field was last edited
 
 // DOM Elements
 const elements = {
     amountFrom: document.getElementById('amountFrom'),
-    cryptoFrom: document.getElementById('cryptoFrom'),
+    currencyFrom: document.getElementById('currencyFrom'),
     amountTo: document.getElementById('amountTo'),
     currencyTo: document.getElementById('currencyTo'),
     swapBtn: document.getElementById('swapBtn'),
@@ -38,8 +40,15 @@ function init() {
 
 // Setup event listeners
 function setupEventListeners() {
-    elements.amountFrom.addEventListener('input', updateConversion);
-    elements.cryptoFrom.addEventListener('change', updateConversion);
+    elements.amountFrom.addEventListener('input', () => {
+        lastEditedField = 'from';
+        updateConversion();
+    });
+    elements.amountTo.addEventListener('input', () => {
+        lastEditedField = 'to';
+        updateConversion();
+    });
+    elements.currencyFrom.addEventListener('change', updateConversion);
     elements.currencyTo.addEventListener('change', updateConversion);
     elements.swapBtn.addEventListener('click', swapCurrencies);
     elements.darkModeBtn.addEventListener('click', toggleTheme);
@@ -63,6 +72,9 @@ async function fetchPrices() {
 
         const data = await response.json();
         priceData = data;
+        
+        // Build comprehensive conversion factors for all pairs
+        buildConversionFactors();
 
         updateConversion();
         updateCryptoGrid();
@@ -76,24 +88,95 @@ async function fetchPrices() {
     }
 }
 
+// Build conversion factors for all currency pairs
+function buildConversionFactors() {
+    conversionFactors = {};
+    
+    // Get all currencies (crypto + fiat)
+    const allCurrencies = [...CONFIG.SUPPORTED_CRYPTOS, ...CONFIG.FIAT_CURRENCIES];
+    
+    // Build conversion factors for each pair
+    allCurrencies.forEach(fromCurrency => {
+        conversionFactors[fromCurrency] = {};
+        
+        allCurrencies.forEach(toCurrency => {
+            if (fromCurrency === toCurrency) {
+                conversionFactors[fromCurrency][toCurrency] = 1;
+            } else {
+                const factor = getConversionFactor(fromCurrency, toCurrency);
+                if (factor !== null) {
+                    conversionFactors[fromCurrency][toCurrency] = factor;
+                }
+            }
+        });
+    });
+}
+
+// Get conversion factor between two currencies
+function getConversionFactor(from, to) {
+    const isCryptoFrom = CONFIG.SUPPORTED_CRYPTOS.includes(from);
+    const isCryptoTo = CONFIG.SUPPORTED_CRYPTOS.includes(to);
+    
+    // Crypto to Fiat or Crypto
+    if (isCryptoFrom && priceData[from]) {
+        if (!isCryptoTo) {
+            // Crypto to Fiat - direct price
+            return priceData[from][to] || null;
+        } else {
+            // Crypto to Crypto - use USD as intermediary
+            const fromUsd = priceData[from]['usd'];
+            const toUsd = priceData[to]['usd'];
+            if (fromUsd && toUsd) {
+                return fromUsd / toUsd;
+            }
+        }
+    }
+    // Fiat to Crypto or Fiat
+    else if (!isCryptoFrom) {
+        if (isCryptoTo && priceData[to]) {
+            // Fiat to Crypto - inverse of crypto to fiat
+            const cryptoToFiat = priceData[to][from];
+            if (cryptoToFiat) {
+                return 1 / cryptoToFiat;
+            }
+        } else if (!isCryptoTo) {
+            // Fiat to Fiat - use BTC as intermediary
+            const btcFrom = priceData['bitcoin'] ? priceData['bitcoin'][from] : null;
+            const btcTo = priceData['bitcoin'] ? priceData['bitcoin'][to] : null;
+            if (btcFrom && btcTo) {
+                return btcTo / btcFrom;
+            }
+        }
+    }
+    
+    return null;
+}
+
 // Update conversion calculation
 function updateConversion() {
-    const amount = parseFloat(elements.amountFrom.value) || 0;
-    const cryptoId = elements.cryptoFrom.value;
-    const currencyId = elements.currencyTo.value.toLowerCase();
-
-    if (!priceData[cryptoId]) {
-        elements.amountTo.textContent = '0';
-        return;
-    }
-
-    const price = priceData[cryptoId][currencyId];
-
-    if (price) {
-        const result = amount * price;
-        elements.amountTo.textContent = formatNumber(result, currencyId);
+    const fromCurrency = elements.currencyFrom.value;
+    const toCurrency = elements.currencyTo.value;
+    
+    if (lastEditedField === 'from') {
+        const amountFrom = parseFloat(elements.amountFrom.value) || 0;
+        const factor = conversionFactors[fromCurrency]?.[toCurrency];
+        
+        if (factor !== undefined && factor !== null) {
+            const result = amountFrom * factor;
+            elements.amountTo.value = formatNumber(result, toCurrency);
+        } else {
+            elements.amountTo.value = 'N/A';
+        }
     } else {
-        elements.amountTo.textContent = 'N/A';
+        const amountTo = parseFloat(elements.amountTo.value) || 0;
+        const factor = conversionFactors[toCurrency]?.[fromCurrency];
+        
+        if (factor !== undefined && factor !== null) {
+            const result = amountTo * factor;
+            elements.amountFrom.value = formatNumber(result, fromCurrency);
+        } else {
+            elements.amountFrom.value = 'N/A';
+        }
     }
 }
 
@@ -105,40 +188,20 @@ function swapCurrencies() {
         elements.swapBtn.style.transform = 'rotate(0deg) scale(1)';
     }, 300);
 
-    const currentCrypto = elements.cryptoFrom.value;
-    const currentCurrency = elements.currencyTo.value;
-    const currentAmount = parseFloat(elements.amountFrom.value) || 0;
-    const currentResult = parseFloat(elements.amountTo.textContent.replace(/,/g, '')) || 0;
+    // Swap the currencies
+    const tempCurrency = elements.currencyFrom.value;
+    elements.currencyFrom.value = elements.currencyTo.value;
+    elements.currencyTo.value = tempCurrency;
 
-    // Check if we can swap (only if currency is BTC or ETH)
-    if (currentCurrency.toLowerCase() === 'btc' || currentCurrency.toLowerCase() === 'eth') {
-        // Find the crypto option that matches the current currency
-        const currencyMap = {
-            'btc': 'bitcoin',
-            'eth': 'ethereum'
-        };
+    // Swap the amounts
+    const tempAmount = elements.amountFrom.value;
+    elements.amountFrom.value = elements.amountTo.value;
+    elements.amountTo.value = tempAmount;
 
-        const newCrypto = currencyMap[currentCurrency.toLowerCase()];
+    // Keep the last edited field consistent
+    lastEditedField = lastEditedField === 'from' ? 'to' : 'from';
 
-        if (newCrypto) {
-            // Get the symbol of the current crypto before swapping
-            const currentCryptoOption = elements.cryptoFrom.querySelector(`option[value="${currentCrypto}"]`);
-            const cryptoSymbol = currentCryptoOption ? currentCryptoOption.dataset.symbol : null;
-
-            // Swap the values
-            elements.cryptoFrom.value = newCrypto;
-
-            if (cryptoSymbol) {
-                // Los valores del select usan lowercase
-                elements.currencyTo.value = cryptoSymbol.toLowerCase();
-            }
-
-            // Swap the amounts
-            elements.amountFrom.value = currentResult;
-
-            updateConversion();
-        }
-    }
+    updateConversion();
 }
 
 // Update crypto grid with cards
@@ -200,7 +263,8 @@ function createCryptoCard(cryptoId, crypto) {
 
     // Click to select this crypto in converter
     card.addEventListener('click', () => {
-        elements.cryptoFrom.value = cryptoId;
+        elements.currencyFrom.value = cryptoId;
+        lastEditedField = 'from';
         updateConversion();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });

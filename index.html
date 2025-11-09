@@ -3,15 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convertidor de Criptomonedas</title>
+    <title>Cripto Converter - Convertidor de Criptomonedas y Divisas</title>
+    <meta name="description" content="Convierte entre criptomonedas y divisas en tiempo real. Soporta Bitcoin, Ethereum, y más de 12 criptomonedas con tasas actualizadas cada 30 segundos.">
+    <meta name="keywords" content="cripto converter, convertidor criptomonedas, bitcoin, ethereum, conversor divisas, crypto converter">
+    <meta name="author" content="Cripto Converter">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cripto Converter - Convertidor de Criptomonedas">
+    <meta property="og:description" content="Convierte entre criptomonedas y divisas en tiempo real">
+    <meta property="og:image" content="cripto-price.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cripto Converter - Convertidor de Criptomonedas">
+    <meta name="twitter:description" content="Convierte entre criptomonedas y divisas en tiempo real">
+    <meta name="twitter:image" content="cripto-price.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="cripto-price.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <div class="logo">PREEV</div>
-            <h1 class="title">Convertidor de Criptomonedas</h1>
+            <div class="logo">Cripto Converter</div>
+            <h1 class="title">Cripto Converter</h1>
             <div class="theme-controls">
                 <button class="theme-btn" id="darkModeBtn" aria-label="Modo oscuro">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -39,39 +57,64 @@
                 </div>
 
                 <div class="select-group">
-                    <select id="cryptoFrom" class="crypto-select">
-                        <option value="bitcoin" data-symbol="BTC">BTC</option>
-                        <option value="ethereum" data-symbol="ETH">ETH</option>
-                        <option value="binancecoin" data-symbol="BNB">BNB</option>
-                        <option value="cardano" data-symbol="ADA">ADA</option>
-                        <option value="solana" data-symbol="SOL">SOL</option>
-                        <option value="ripple" data-symbol="XRP">XRP</option>
-                        <option value="polkadot" data-symbol="DOT">DOT</option>
-                        <option value="dogecoin" data-symbol="DOGE">DOGE</option>
-                        <option value="avalanche-2" data-symbol="AVAX">AVAX</option>
-                        <option value="polygon" data-symbol="MATIC">MATIC</option>
-                        <option value="litecoin" data-symbol="LTC">LTC</option>
-                        <option value="chainlink" data-symbol="LINK">LINK</option>
+                    <select id="currencyFrom" class="crypto-select">
+                        <optgroup label="Criptomonedas">
+                            <option value="bitcoin" data-symbol="BTC">BTC</option>
+                            <option value="ethereum" data-symbol="ETH">ETH</option>
+                            <option value="binancecoin" data-symbol="BNB">BNB</option>
+                            <option value="cardano" data-symbol="ADA">ADA</option>
+                            <option value="solana" data-symbol="SOL">SOL</option>
+                            <option value="ripple" data-symbol="XRP">XRP</option>
+                            <option value="polkadot" data-symbol="DOT">DOT</option>
+                            <option value="dogecoin" data-symbol="DOGE">DOGE</option>
+                            <option value="avalanche-2" data-symbol="AVAX">AVAX</option>
+                            <option value="polygon" data-symbol="MATIC">MATIC</option>
+                            <option value="litecoin" data-symbol="LTC">LTC</option>
+                            <option value="chainlink" data-symbol="LINK">LINK</option>
+                        </optgroup>
+                        <optgroup label="Divisas">
+                            <option value="usd" data-symbol="USD">USD</option>
+                            <option value="eur" data-symbol="EUR">EUR</option>
+                            <option value="gbp" data-symbol="GBP">GBP</option>
+                            <option value="jpy" data-symbol="JPY">JPY</option>
+                            <option value="cad" data-symbol="CAD">CAD</option>
+                            <option value="aud" data-symbol="AUD">AUD</option>
+                            <option value="chf" data-symbol="CHF">CHF</option>
+                        </optgroup>
                     </select>
                 </div>
 
                 <div class="equals-sign">=</div>
 
-                <div class="result-group">
-                    <div id="amountTo" class="amount-result">0</div>
+                <div class="input-group">
+                    <input type="number" id="amountTo" class="amount-input" value="0" min="0" step="any">
                 </div>
 
                 <div class="select-group">
                     <select id="currencyTo" class="crypto-select">
-                        <option value="usd" data-symbol="USD">USD</option>
-                        <option value="eur" data-symbol="EUR">EUR</option>
-                        <option value="gbp" data-symbol="GBP">GBP</option>
-                        <option value="jpy" data-symbol="JPY">JPY</option>
-                        <option value="cad" data-symbol="CAD">CAD</option>
-                        <option value="aud" data-symbol="AUD">AUD</option>
-                        <option value="chf" data-symbol="CHF">CHF</option>
-                        <option value="btc" data-symbol="BTC">BTC</option>
-                        <option value="eth" data-symbol="ETH">ETH</option>
+                        <optgroup label="Divisas">
+                            <option value="usd" data-symbol="USD">USD</option>
+                            <option value="eur" data-symbol="EUR">EUR</option>
+                            <option value="gbp" data-symbol="GBP">GBP</option>
+                            <option value="jpy" data-symbol="JPY">JPY</option>
+                            <option value="cad" data-symbol="CAD">CAD</option>
+                            <option value="aud" data-symbol="AUD">AUD</option>
+                            <option value="chf" data-symbol="CHF">CHF</option>
+                        </optgroup>
+                        <optgroup label="Criptomonedas">
+                            <option value="bitcoin" data-symbol="BTC">BTC</option>
+                            <option value="ethereum" data-symbol="ETH">ETH</option>
+                            <option value="binancecoin" data-symbol="BNB">BNB</option>
+                            <option value="cardano" data-symbol="ADA">ADA</option>
+                            <option value="solana" data-symbol="SOL">SOL</option>
+                            <option value="ripple" data-symbol="XRP">XRP</option>
+                            <option value="polkadot" data-symbol="DOT">DOT</option>
+                            <option value="dogecoin" data-symbol="DOGE">DOGE</option>
+                            <option value="avalanche-2" data-symbol="AVAX">AVAX</option>
+                            <option value="polygon" data-symbol="MATIC">MATIC</option>
+                            <option value="litecoin" data-symbol="LTC">LTC</option>
+                            <option value="chainlink" data-symbol="LINK">LINK</option>
+                        </optgroup>
                     </select>
                 </div>
             </div>
@@ -101,6 +144,25 @@
             <p>Actualización automática cada 30 segundos</p>
         </footer>
     </div>
+
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Cripto Converter",
+        "description": "Convertidor de criptomonedas y divisas en tiempo real",
+        "url": "https://beta3000.github.io/cripto-price-frontend/",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": "Conversión entre criptomonedas y divisas, actualización en tiempo real, soporte para más de 12 criptomonedas"
+    }
+    </script>
 
     <script src="app.js"></script>
 </body>

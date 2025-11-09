@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://beta3000.github.io/cripto-price-frontend/sitemap.xml
