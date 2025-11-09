@@ -116,7 +116,7 @@ function buildConversionFactors() {
 function getConversionFactor(from, to) {
     const isCryptoFrom = CONFIG.SUPPORTED_CRYPTOS.includes(from);
     const isCryptoTo = CONFIG.SUPPORTED_CRYPTOS.includes(to);
-    
+
     // Crypto to Fiat or Crypto
     if (isCryptoFrom && priceData[from]) {
         if (!isCryptoTo) {
@@ -124,9 +124,9 @@ function getConversionFactor(from, to) {
             return priceData[from][to] || null;
         } else {
             // Crypto to Crypto - use USD as intermediary
-            const fromUsd = priceData[from]['usd'];
-            const toUsd = priceData[to]['usd'];
-            if (fromUsd && toUsd) {
+            if (priceData[to] && priceData[from]['usd'] && priceData[to]['usd']) {
+                const fromUsd = priceData[from]['usd'];
+                const toUsd = priceData[to]['usd'];
                 return fromUsd / toUsd;
             }
         }
@@ -148,7 +148,7 @@ function getConversionFactor(from, to) {
             }
         }
     }
-    
+
     return null;
 }
 
