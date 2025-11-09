@@ -1,11 +1,17 @@
-# Convertidor de Criptomonedas
+# Cripto Converter
 
-Una aplicación web estática y minimalista para convertir criptomonedas a diferentes monedas fiat en tiempo real.
+Una aplicación web estática y minimalista para convertir entre criptomonedas y divisas fiat en tiempo real, con soporte para conversiones bidireccionales entre todos los pares.
 
 ## Características
 
 - **12 Criptomonedas soportadas**: BTC, ETH, BNB, ADA, SOL, XRP, DOT, DOGE, AVAX, MATIC, LTC, LINK
 - **7 Monedas fiat**: USD, EUR, GBP, JPY, CAD, AUD, CHF
+- **Conversión universal**: Convierte entre cualquier par de monedas:
+  - Cripto ↔ Fiat
+  - Cripto ↔ Cripto
+  - Fiat ↔ Fiat
+- **Factores de conversión en memoria**: Todos los pares se calculan y almacenan para conversiones instantáneas
+- **Conversión bidireccional**: Edita cualquier campo (origen o destino) y el otro se actualiza automáticamente
 - **Actualización automática** cada 30 segundos
 - **Tema claro/oscuro** con persistencia en localStorage
 - **Diseño responsivo** optimizado para móviles y desktop
@@ -14,6 +20,7 @@ Una aplicación web estática y minimalista para convertir criptomonedas a difer
   - Cambio en 24h
   - Market Cap
   - Volumen 24h
+- **SEO optimizado**: Sitemap, robots.txt, meta tags, structured data
 - **Sin dependencias**: HTML, CSS y JavaScript vanilla
 - **API pública**: CoinGecko API (sin necesidad de API key)
 
@@ -30,10 +37,13 @@ cripto-price-frontend/
 ## Uso
 
 1. Abre `index.html` en tu navegador
-2. Selecciona la criptomoneda y la cantidad a convertir
-3. Selecciona la moneda de destino
-4. El resultado se actualizará automáticamente
-5. Haz clic en las tarjetas de criptomonedas para seleccionarlas en el convertidor
+2. Selecciona cualquier moneda de origen (cripto o fiat)
+3. Ingresa la cantidad a convertir
+4. Selecciona la moneda de destino
+5. El resultado se actualiza automáticamente
+6. Puedes editar el campo de destino para calcular en reversa
+7. Usa el botón de intercambio para invertir las monedas
+8. Haz clic en las tarjetas de criptomonedas para seleccionarlas en el convertidor
 
 ## Características Técnicas
 

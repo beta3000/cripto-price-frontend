@@ -72,13 +72,13 @@ body {
 }
 
 .logo {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 800;
     padding: 0.75rem 1.5rem;
     background: var(--gradient-primary);
     color: white;
     border-radius: 12px;
-    letter-spacing: 3px;
+    letter-spacing: 1px;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
 }
@@ -214,6 +214,22 @@ body {
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+}
+
+/* Style for amount input when used as "to" field */
+#amountTo {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+#amountTo:hover {
+    border-color: var(--accent-hover);
+}
+
+#amountTo:focus {
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 0 4px var(--accent-light);
 }
 
 .select-group {
