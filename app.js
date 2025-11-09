@@ -154,28 +154,43 @@ function getConversionFactor(from, to) {
 
 // Update conversion calculation
 function updateConversion() {
+    // Don't update if conversion factors aren't loaded yet
+    if (Object.keys(conversionFactors).length === 0) {
+        return;
+    }
+    
     const fromCurrency = elements.currencyFrom.value;
     const toCurrency = elements.currencyTo.value;
     
     if (lastEditedField === 'from') {
-        const amountFrom = parseFloat(elements.amountFrom.value) || 0;
+        const amountFrom = parseFloat(elements.amountFrom.value);
         const factor = conversionFactors[fromCurrency]?.[toCurrency];
         
-        if (factor !== undefined && factor !== null) {
+        // Only update if we have a valid amount and factor
+        if (!isNaN(amountFrom) && amountFrom !== null && factor !== undefined && factor !== null) {
             const result = amountFrom * factor;
-            elements.amountTo.value = formatNumber(result, toCurrency);
+            elements.amountTo.value = result;
+        } else if (isNaN(amountFrom) || amountFrom === null) {
+            // Clear the target field if source is empty/invalid
+            elements.amountTo.value = '';
         } else {
-            elements.amountTo.value = 'N/A';
+            // No conversion factor available
+            elements.amountTo.value = '';
         }
     } else {
-        const amountTo = parseFloat(elements.amountTo.value) || 0;
+        const amountTo = parseFloat(elements.amountTo.value);
         const factor = conversionFactors[toCurrency]?.[fromCurrency];
         
-        if (factor !== undefined && factor !== null) {
+        // Only update if we have a valid amount and factor
+        if (!isNaN(amountTo) && amountTo !== null && factor !== undefined && factor !== null) {
             const result = amountTo * factor;
-            elements.amountFrom.value = formatNumber(result, fromCurrency);
+            elements.amountFrom.value = result;
+        } else if (isNaN(amountTo) || amountTo === null) {
+            // Clear the target field if source is empty/invalid
+            elements.amountFrom.value = '';
         } else {
-            elements.amountFrom.value = 'N/A';
+            // No conversion factor available
+            elements.amountFrom.value = '';
         }
     }
 }
