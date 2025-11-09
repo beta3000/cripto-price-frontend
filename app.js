@@ -107,6 +107,8 @@ function swapCurrencies() {
 
     const currentCrypto = elements.cryptoFrom.value;
     const currentCurrency = elements.currencyTo.value;
+    const currentAmount = parseFloat(elements.amountFrom.value) || 0;
+    const currentResult = parseFloat(elements.amountTo.textContent.replace(/,/g, '')) || 0;
 
     // Check if we can swap (only if currency is BTC or ETH)
     if (currentCurrency.toLowerCase() === 'btc' || currentCurrency.toLowerCase() === 'eth') {
@@ -130,6 +132,9 @@ function swapCurrencies() {
                 // Los valores del select usan lowercase
                 elements.currencyTo.value = cryptoSymbol.toLowerCase();
             }
+
+            // Swap the amounts
+            elements.amountFrom.value = currentResult;
 
             updateConversion();
         }
