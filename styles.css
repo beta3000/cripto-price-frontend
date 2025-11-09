@@ -197,7 +197,7 @@ body {
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 4px var(--accent-light);
-    transform: scale(1.02);
+    transform: scale3d(1.02, 1.02, 1);
 }
 
 .amount-result {
@@ -244,7 +244,7 @@ body {
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 4px var(--accent-light);
-    transform: scale(1.02);
+    transform: scale3d(1.02, 1.02, 1);
 }
 
 .equals-sign {
